@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -29,42 +28,36 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	)
 
+
+var kubeconfig string
+
 // rpcCmd represents the rpc command
 func init() {
-	rpcCmd := &RpcCommand{}
-
-	rootCmd.AddCommand(&cobra.Command{
+	r := &RpcCommand{}
+	rpcCmd := &cobra.Command{
 		Use:   "rpc",
 		Short: "",
 		Long: ``,
-		Run: rpcCmd.Run,
-	})
+		Run: r.Run,
+	}
+	rpcCmd.Flags().StringVar(&kubeconfig, "kubeconfig", defaultKubeconfig(), "Help message for toggle")
+	rootCmd.AddCommand(rpcCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// rpcCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// rpcCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
+
+
 
 
 type RpcCommand struct {}
 
 func (r *RpcCommand) Run(cmd *cobra.Command, args []string) {
-	var kubeconfig *string
-	if home := homeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
 	// use the current context in kubeconfig
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -101,6 +94,15 @@ func (r *RpcCommand) Run(cmd *cobra.Command, args []string) {
 		time.Sleep(10 * time.Second)
 	}
 }
+
+func defaultKubeconfig() string {
+	if home := homeDir(); home != "" {
+		return filepath.Join(home, ".kube", "config")
+	} else {
+		return ""
+	}
+}
+
 func homeDir() string {
 	if h := os.Getenv("HOME"); h != "" {
 		return h
