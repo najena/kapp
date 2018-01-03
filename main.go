@@ -15,6 +15,8 @@
 package main
 
 import "github.com/najena/kapp/cmd"
+import _ "k8s.io/client-go/kubernetes"
+import _ "k8s.io/client-go/tools/clientcmd"
 
 func main() {
 	cmd.Execute()
