@@ -20,11 +20,10 @@ package main
 
 import (
 	"log"
-	"os"
 
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+    ngrpc "github.com/najena/kapp/pkg/grpc"
+
+    "google.golang.org/grpc"
 )
 
 const (
@@ -39,16 +38,14 @@ func main() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewGreeterClient(conn)
-
-	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	}
-	r, err := c.SayHello(context.Background(), &pb.HelloRequest{Name: name})
+	c := ngrpc.NewDescriptorClient(conn)
+	d, err := c.GetServices()
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	log.Printf("Greeting: %s", r.Message)
+	    log.Fatalf("%v", err)
+    }
+    log.Printf("Services: %+v\n", d)
+
+    for _, m := range d.Messages {
+        m.
+    }
 }
