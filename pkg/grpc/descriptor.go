@@ -25,7 +25,7 @@ import (
     rpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
     "github.com/gogo/protobuf/proto"
     "github.com/golang/protobuf/protoc-gen-go/descriptor"
-    protobufdescriptor "github.com/golang/protobuf/descriptor"
+//    protobufdescriptor "github.com/golang/protobuf/descriptor"
 )
 
 const reflectionServiceName = "grpc.reflection.v1alpha.ServerReflection"
@@ -40,7 +40,7 @@ type DescriptorClientImpl struct {
 }
 
 func NewDescriptorClient(conn *grpc.ClientConn) DescriptorClient {
-    return &DescriptorClientImpl{conn, rpb.NewServerReflectionClient(c.conn)}
+    return &DescriptorClientImpl{conn, rpb.NewServerReflectionClient(conn)}
 }
 
 type GrpcServices struct {

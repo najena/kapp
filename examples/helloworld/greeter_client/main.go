@@ -46,6 +46,6 @@ func main() {
     log.Printf("Services: %+v\n", d)
 
     for _, m := range d.Messages {
-        m.
+        log.Printf("%+v", m)
     }
 }
